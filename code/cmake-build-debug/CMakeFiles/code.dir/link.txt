@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/code.dir/main.c.o  -o code /usr/lib/x86_64-linux-gnu/libOpenGL.so /usr/lib/x86_64-linux-gnu/libGLX.so /usr/lib/x86_64-linux-gnu/libGLU.so /usr/lib/x86_64-linux-gnu/libglut.so /usr/lib/x86_64-linux-gnu/libXi.so -lm 
