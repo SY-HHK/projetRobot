@@ -115,7 +115,7 @@ void display(){
     glPushMatrix();
     /* Permet de créer un point de vue. Définit une matrice de modélisation-visualisation et la multiplie
      à droite de lma matrice active, ici l'identité*/
-    gluLookAt(X, Y, Z,      // position caméra
+    gluLookAt(R * cos(phi) * sin(alpha), R * sin(phi), R * cos(phi) * cos(alpha),      // position caméra
               0.0, 0.0, 0.0,      // point de mire
               0.0, 1.0, 0.0);     // vecteur d'orientation caméra
 
@@ -131,16 +131,6 @@ void display(){
     glTranslatef(1.0, 0.0, 0.0);
     wirecube(2.0, 0.4, 1.0);
     glPopMatrix();
-
-
-
-
-
-
-
-
-
-
 
 
     /* On swap (échange) les buffers, càd, on fait passer l'image calculée et dessinée
@@ -199,22 +189,27 @@ void keyboard(unsigned char key,       // Touche qui a été pressée
             (braAngle -= 5)% 360;
             break;
 
-        case 'a':
+         case 'h':
             alpha += 0.1;
-            phi += 0.1;
-            X = R * cos(phi) * sin(alpha);
-            Y = R * sin(phi);
-            Z = R * cos(phi) * cos(alpha);
+            phi += 0.0;
             break;
-
-        case 'z':
-            alpha += 0.1;
+        
+        
+        case 'f':
+           alpha -= 0.1;
+           phi += 0.0;
+           break;
+        
+        
+        case 't':
+            alpha += 0.0;
             phi += 0.1;
-            X = R * cos(phi) * sin(alpha);
-            Y = R * sin(phi);
-            Z = R * cos(phi) * cos(alpha);
             break;
-
+        
+        case 'g':
+            alpha += 0.0;
+            phi -= 0.1;
+            break;
 
         default:return;
     }
