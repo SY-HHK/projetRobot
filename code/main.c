@@ -1,22 +1,30 @@
 /************************************************************/
-/*            TP3: Modélisation d'un bras articulé                 */
-/************************************************************/
-/*                                                            */
-/*        ESGI: algorithmique pour l'infographie            */
-/*                                                            */
-/************************************************************/
-/*                                                            */
-/*  Objectif: afficher des formes 3D et illuminer la scËne  */
-/*                                                            */
+/*           Robot projet             */
 /************************************************************/
 
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glut.h>
+/********************Header mac **********************/
+
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl.h>
+#include <OpenGl/glu.h>
+#include <GLUT/glut.h>
 #include<stdlib.h>
 #include<stdio.h>
-#include <math.h>
+#include<math.h>
+
+/********************Header win **********************/
+
+
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+//#include <GL/glut.h>
+//#include<stdlib.h>
+//#include<stdio.h>
+//#include <math.h>
+
+
+GLUquadricObj *quadratic = gluNewQuadric();
 
 float X = 5.0;
 float Y = 2.0;
@@ -27,18 +35,27 @@ float phi = 0;
 float const PI = 3.141592;
 float alpha = -PI / 2;
 
+float angle = 0.0;
+float angleAntenne = 0.0;
 
+int sens = 1;
 
+float oeil = 10.0;
+float oeilBas = 10.0;
 
 static int braAngle= 0, coudeAngle=0;
 float cameraAngle = 10.0;
 
 /* prototypes de fonctions */
-void initRendering();                           // Initialisation du rendu
+void initRendering();// Initialisation du rendu
+ void IdleFunction(void );
 void display();                             // modélisation
 void reshape(int w,int h);                      // visualisation
 // mise à jour: appelle Timer pour l'animation de la scène
 void keyboard(unsigned char key, int x, int y); // fonction clavier
+void wirecube(GLdouble width, GLdouble height, GLdouble depth); //fonction cube
+void demiCercle(); //fonction demi cercle
+
 
 
 /* Programme principal */
@@ -51,7 +68,7 @@ int main(int argc,       // argc: nombre d'arguments, argc vaut au moins 1
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH); // mode d'affichage RGB, et test prafondeur
     glutInitWindowSize(800 , 600);                // dimension fenêtre
     glutInitWindowPosition (100, 100);           // position coin haut gauche
-    glutCreateWindow("TP1: formes 2D et transformation");  // nom
+    glutCreateWindow("Projet robot");  // nom
 
     /* Initialisation d'OpenGL */
     initRendering();
@@ -59,13 +76,13 @@ int main(int argc,       // argc: nombre d'arguments, argc vaut au moins 1
     /* Enregistrement des fonctions de rappel
      => initialisation des fonctions callback appelées par glut */
     glutDisplayFunc(display);
+    glutIdleFunc(IdleFunction); /* appel de glutIdleFunc (Timer pr animation) */
     glutReshapeFunc(reshape);
     glutKeyboardFunc(keyboard);
 
     /* rq: le callback de fonction (fonction de rappel) est une fonction qui est passée en argument à une
      autre fonction. Ici, le main fait usage des deux fonctions de rappel (qui fonctionnent en même temps)
      alors qu'il ne les connaît pas par avance.*/
-
 
 
     /* Entrée dans la boucle principale de glut, traitement des évènements */
@@ -91,6 +108,7 @@ void initRendering() {
 
 }
 
+
 /* Creation des cubes */
 void wirecube(GLdouble width, GLdouble height, GLdouble depth){
     glPushMatrix();
@@ -98,6 +116,19 @@ void wirecube(GLdouble width, GLdouble height, GLdouble depth){
     glutWireCube(1.0);
     glPopMatrix();
 }
+
+void demiCercle(){
+    glBegin(GL_POLYGON);
+        for (int i=0 ; i<oeil; i++) {
+            float mycos = 0.3*cos(i*2* PI /50);
+            float mysin = 0.3*sin(i*2* PI/50);
+            glColor3f(0.0,0.0,0.0);
+            glVertex2f(mycos, mysin);
+        }
+    glEnd();
+
+}
+
 
 /* Création de la scène */
 void display(){
@@ -118,20 +149,114 @@ void display(){
     gluLookAt(R * cos(phi) * sin(alpha), R * sin(phi), R * cos(phi) * cos(alpha),      // position caméra
               0.0, 0.0, 0.0,      // point de mire
               0.0, 1.0, 0.0);     // vecteur d'orientation caméra
+    
+    
+    /************************************************************/
+    /*            Tête                    */
+    /************************************************************/
 
-    glTranslatef(-1.0, 0.0, 0.0);
-    glRotatef((GLfloat) braAngle, 0.0, 0.0, 1.0);
-    glutWireSphere(0.4, 50, 50);
-    glTranslatef(1.0, 0.0, 0.0);
-    wirecube(2.0, 0.4, 1.0);
+    
+//triangle
+   glColor3f(0.193, 0.021, 0.021); //rouge
 
-    glTranslatef(1.0, 0.0, 0.0);
-    glRotatef((GLfloat) coudeAngle, 0.0, 0.0, 1.0);
-    glutWireSphere(0.4, 50, 50);
-    glTranslatef(1.0, 0.0, 0.0);
-    wirecube(2.0, 0.4, 1.0);
-    glPopMatrix();
+   glTranslatef(1.0, 0.0, 0.0);
+   glRotatef(0.0,0.0, 0.0, 0.0);
 
+   glBegin(GL_TRIANGLES);
+        glVertex3f(1.0, -1.0, 0.0);
+        glVertex3f(0.0, 1.0, 0.0);
+        glVertex3f(-1.0, -1.0, 0.0);
+
+//    2ieme triangle
+
+        glVertex3f(1.0, -1.0, 1.0);
+        glVertex3f(0.0, 1.0, 1.0);
+        glVertex3f(-1.0, -1.0, 1.0);
+
+   glEnd();
+
+
+
+//quad1
+    glBegin(GL_QUADS);
+              glVertex3f(0.0, 1.0, 0.0);
+              glVertex3f(1.0, -1.0, 0.0);
+              glVertex3f(1.0, -1.0, 1.0);
+              glVertex3f(0.0, 1.0, 1.0);
+
+          glEnd();
+
+//   quad2
+    glBegin(GL_QUADS);
+              glVertex3f(0.0, 1.0, 0.0);
+              glVertex3f(-1.0, -1.0, 0.0);
+              glVertex3f(-1.0, -1.0, 1.0);
+              glVertex3f(0.0, 1.0, 1.0);
+          glEnd();
+
+
+//quadBas
+       glBegin(GL_QUADS);
+            glVertex3f(-1.0, -1.0, 0.0);
+            glVertex3f(1.0, -1.0, 0.0);
+            glVertex3f(1.0, -1.0, 1.0);
+            glVertex3f(-1.0, -1.0, 1.0);
+       glEnd();
+
+    
+    /************************************************************/
+    /*            OEIL                    */
+    /************************************************************/
+
+    
+    glTranslatef(0.0, 0.0, 1.0);
+    glRotatef(angle,0.0, 0.0, 1.0);
+
+    glColor3f(0, 0, 0); //noir
+    glutSolidSphere(0.1, 50, 50);
+
+
+    
+
+    gluCylinder(quadratic, 0.3f, 0.3f, 0.1, 32, 32);
+
+    glTranslatef(0.0, 0.0, 0.1);
+
+    demiCercle();
+    
+    glTranslatef(0.0, 0.0, -0.1);
+    glRotatef(angle,0.0, 0.0, 1.0);
+
+    
+    /************************************************************/
+    /*            BOUCHE                  */
+    /************************************************************/
+    glTranslatef(0.0, -0.7, 0.0);
+    glRotatef(angle,0.0, 0.0, 0.0);
+
+    glColor3f(1, 0, 0); //red
+
+    wirecube(0.7, 0.3, 0.1);
+
+    
+    
+    /************************************************************/
+    /*            Antenne                 */
+    /************************************************************/
+    glTranslatef(0.0, 2.4, -0.5);
+    glRotatef(100,0.0, 0.0, 0.0);
+
+    glColor3f(1, 0, 0); //red
+
+    gluCylinder(quadratic, 0.03f, 0.03f, 0.9, 30, 30);
+    glColor3f(1, 1, 0); //red
+
+    
+    glTranslatef(0.0, 0.0, -0.01);
+    glRotatef(0.0,0.0, 0.0, 0.0);
+    glutSolidSphere(0.05, 50, 50);
+
+glPopMatrix();
 
     /* On swap (échange) les buffers, càd, on fait passer l'image calculée et dessinée
      dans le back buffer au buffer qui va l'afficher: le front buffer (en général), c'est le bouble buffering
@@ -140,6 +265,25 @@ void display(){
 
     /* On force l'affichage */
     glFlush(); // nettoie les fenêtres précédentes
+}
+
+
+/*  Animations qui utilise le temps */
+void IdleFunction(void) {
+
+    /*  Oeil */
+
+    if ((oeil < 50.0  && sens == 1) || oeil < 9.0 ){
+        oeil += 3;
+        sens = 1;
+
+    }
+    else{
+        oeil -= 3.0;
+        sens = 0;
+    }
+
+    glutPostRedisplay();
 }
 
 
@@ -188,7 +332,7 @@ void keyboard(unsigned char key,       // Touche qui a été pressée
         case 'x':
             (braAngle -= 5)% 360;
             break;
-
+            
          case 'h':
             alpha += 0.1;
             phi += 0.0;
@@ -215,3 +359,4 @@ void keyboard(unsigned char key,       // Touche qui a été pressée
     }
     glutPostRedisplay();
 }
+
