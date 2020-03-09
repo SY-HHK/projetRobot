@@ -55,6 +55,7 @@ void reshape(int w,int h);                      // visualisation
 void keyboard(unsigned char key, int x, int y); // fonction clavier
 void wirecube(GLdouble width, GLdouble height, GLdouble depth); //fonction cube
 void demiCercle(); //fonction demi cercle
+void vise(); //fonction cercle pr faire les vises
 
 
 
@@ -129,6 +130,17 @@ void demiCercle(){
 
 }
 
+void vise(){
+    glBegin(GL_POLYGON);
+              for (int i=0 ; i<50; i++) {
+                  float mycos = 0.1*cos(i*2* PI /50);
+                  float mysin = 0.1*sin(i*2* PI/50);
+                  glColor3f(0.0,0.0,0.0);
+                  glVertex2f(mycos, mysin);
+              }
+    glEnd();
+}
+
 
 /* Création de la scène */
 void display(){
@@ -150,31 +162,33 @@ void display(){
               0.0, 0.0, 0.0,      // point de mire
               0.0, 1.0, 0.0);     // vecteur d'orientation caméra
     
-    
     /************************************************************/
     /*            Tête                    */
     /************************************************************/
 
     
 //triangle
-   glColor3f(0.193, 0.021, 0.021); //rouge
+   glColor3f(0.247, 0.103, 0.108); //rouge
 
    glTranslatef(1.0, 0.0, 0.0);
    glRotatef(0.0,0.0, 0.0, 0.0);
+    
+    
+//    vise();
+   
+    glColor3f(0.247, 0.103, 0.108); //rouge
 
    glBegin(GL_TRIANGLES);
         glVertex3f(1.0, -1.0, 0.0);
         glVertex3f(0.0, 1.0, 0.0);
-        glVertex3f(-1.0, -1.0, 0.0);
+        glVertex3f(0.0, -1.0, 0.0);
 
 //    2ieme triangle
-
         glVertex3f(1.0, -1.0, 1.0);
         glVertex3f(0.0, 1.0, 1.0);
         glVertex3f(-1.0, -1.0, 1.0);
 
    glEnd();
-
 
 
 //quad1
@@ -184,7 +198,7 @@ void display(){
               glVertex3f(1.0, -1.0, 1.0);
               glVertex3f(0.0, 1.0, 1.0);
 
-          glEnd();
+    glEnd();
 
 //   quad2
     glBegin(GL_QUADS);
@@ -192,7 +206,7 @@ void display(){
               glVertex3f(-1.0, -1.0, 0.0);
               glVertex3f(-1.0, -1.0, 1.0);
               glVertex3f(0.0, 1.0, 1.0);
-          glEnd();
+    glEnd();
 
 
 //quadBas
@@ -203,12 +217,12 @@ void display(){
             glVertex3f(-1.0, -1.0, 1.0);
        glEnd();
 
-    
+
     /************************************************************/
     /*            OEIL                    */
     /************************************************************/
 
-    
+
     glTranslatef(0.0, 0.0, 1.0);
     glRotatef(angle,0.0, 0.0, 1.0);
 
@@ -216,18 +230,18 @@ void display(){
     glutSolidSphere(0.1, 50, 50);
 
 
-    
+
 
     gluCylinder(quadratic, 0.3f, 0.3f, 0.1, 32, 32);
 
     glTranslatef(0.0, 0.0, 0.1);
 
     demiCercle();
-    
+
     glTranslatef(0.0, 0.0, -0.1);
     glRotatef(angle,0.0, 0.0, 1.0);
 
-    
+
     /************************************************************/
     /*            BOUCHE                  */
     /************************************************************/
@@ -238,8 +252,8 @@ void display(){
 
     wirecube(0.7, 0.3, 0.1);
 
-    
-    
+
+
     /************************************************************/
     /*            Antenne                 */
     /************************************************************/
@@ -251,7 +265,7 @@ void display(){
     gluCylinder(quadratic, 0.03f, 0.03f, 0.9, 30, 30);
     glColor3f(1, 1, 0); //red
 
-    
+
     glTranslatef(0.0, 0.0, -0.01);
     glRotatef(0.0,0.0, 0.0, 0.0);
     glutSolidSphere(0.05, 50, 50);
@@ -274,12 +288,12 @@ void IdleFunction(void) {
     /*  Oeil */
 
     if ((oeil < 50.0  && sens == 1) || oeil < 9.0 ){
-        oeil += 3;
+        oeil += 6.0;
         sens = 1;
 
     }
     else{
-        oeil -= 3.0;
+        oeil -= 6.0;
         sens = 0;
     }
 
@@ -359,4 +373,3 @@ void keyboard(unsigned char key,       // Touche qui a été pressée
     }
     glutPostRedisplay();
 }
-
